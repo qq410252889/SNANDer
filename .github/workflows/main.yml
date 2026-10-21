@@ -85,14 +85,20 @@ jobs:
       - name: Build App
         run: |
           ./build-for-windows.sh
+          echo "=== build artifacts ==="
+          ls -la build/x86/ build/x64/ 2>/dev/null || true
+          find . -name "*.exe" -not -path "./.git/*" 2>/dev/null | head -5 || true
 
       # step4: Prepare Artifacts and Source Package
       - name: Prepare Artifacts and Source Package
         shell: bash
         run: |
           set -e
-          cp build/x86/snander.exe SNANDER-Windows-32bit.exe
-          cp build/x64/snander.exe SNANDER-Windows-64bit.exe
+          cd "${{ github.workspace }}"
+          pwd
+          ls -la build/x86/ build/x64/
+          cp -v build/x86/snander.exe SNANDER-Windows-32bit.exe
+          cp -v build/x64/snander.exe SNANDER-Windows-64bit.exe
           mkdir -p release_pkg
           cp SNANDER-Windows-32bit.exe SNANDER-Windows-64bit.exe release_pkg/
           git archive HEAD | tar -x -C release_pkg
