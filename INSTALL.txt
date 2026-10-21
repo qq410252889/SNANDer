@@ -1,12 +1,12 @@
-Windows-10 64bit:
+Windows 10 64 位：
 
-1. Insert USB Programmer based on chip CH341A in port USB.
-2. Download and Run zadig-2.8.exe. Select device ID 1a86:5512 and push INSTALL.
-3. Use SNANDer.exe in console mode(cmd)...
+1. 将基于 CH341A 芯片的 USB 编程器插入 USB 接口。
+2. 下载并运行 zadig-2.8.exe。选择设备 ID 1a86:5512，然后点击 INSTALL（安装驱动）。
+3. 在控制台模式（cmd）下使用 SNANDer.exe...
 
-Linux Ubuntu 64bit:
+Linux Ubuntu 64 位：
 
-1. Copy SNANDer in directory /usr/local/bin.
-2. Copy 40-persistent-ch341a.rules in directory /etc/udev/rules.d.
-3. Restart udev service as udevadm control --reload-rules.
-4. Use SNANDer in console mode.
+1. 将 SNANDer 复制到 /usr/local/bin 目录。
+2. 将 40-persistent-ch341a.rules 复制到 /etc/udev/rules.d 目录。
+3. 执行 udevadm control --reload-rules 重启 udev 服务。
+4. 在控制台模式下使用 SNANDer。
