@@ -52,7 +52,11 @@ jobs:
             VARIANT="${{ github.event.inputs.variant }}"
             echo "branch=${BRANCH:-master}" >> "$GITHUB_OUTPUT"
             echo "variant=${VARIANT:-CH341A}" >> "$GITHUB_OUTPUT"
-            echo "zip=SNANDer_V${TAG:-latest}.zip" >> "$GITHUB_OUTPUT"
+            if [[ "${VARIANT:-CH341A}" == "CH347" ]]; then
+              echo "zip=SNANDer-CH347_V${TAG:-latest}.zip" >> "$GITHUB_OUTPUT"
+            else
+              echo "zip=SNANDer-CH341_V${TAG:-latest}.zip" >> "$GITHUB_OUTPUT"
+            fi
             echo "ver=${TAG:-latest}" >> "$GITHUB_OUTPUT"
             echo "release_tag=v.${TAG:-latest}" >> "$GITHUB_OUTPUT"
             exit 0
@@ -68,7 +72,7 @@ jobs:
           else
             echo "branch=master" >> "$GITHUB_OUTPUT"
             echo "variant=CH341A" >> "$GITHUB_OUTPUT"
-            echo "zip=SNANDer_V${VER}.zip" >> "$GITHUB_OUTPUT"
+            echo "zip=SNANDer-CH341_V${VER}.zip" >> "$GITHUB_OUTPUT"
           fi
 
       # step1: Check out Git Repository
@@ -151,6 +155,10 @@ jobs:
           else
             REL_TITLE="SNANDer v${VER}-ch341"
           fi
+          # remove any stale zip assets on this tag (zip naming changed over releases)
+          for aid in $(gh api --paginate "/repos/${{ github.repository }}/releases/tags/${TAG}/assets" -q '.[] | select(.name | endswith(".zip")) | .id' 2>/dev/null || true); do
+            gh api -X DELETE "/repos/${{ github.repository }}/releases/assets/${aid}" >/dev/null 2>&1 || true
+          done
           # create release (skip if it already exists)
           gh release create "${TAG}" SNANDer-Windows-32bit.exe SNANDer-Windows-64bit.exe "${ZIP}" \
             --repo "${{ github.repository }}" \
