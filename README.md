@@ -1,121 +1,103 @@
 SNANDer
 ===
 
-SNANDer - Serial Nor/nAND/Eeprom programmeR (based on CH347)
+SNANDer - 串行 NOR / NAND / EEPROM 编程器（基于 CH341A）
 
-![ch347-nextProgrammer](photos/ch347-nextProgrammer.jpg)
+![ch341a-nextProgrammer](photos/ch341a-nextProgrammer.jpg)
 
-**Requirements**
+**依赖要求**
 
-* gcc/mingw-w64, wget, make, and libusb-1.0-dev (via apt Command Line Tools)
+* gcc / mingw-w64、wget、make 以及 libusb-1.0-dev（可通过 apt 命令行工具安装）
 
-**Compiling for Linux**
+**在 Linux 下编译**
 
-After installing the gcc and necessary tools, building `snander` is as simple as running the command:
+安装 gcc 及所需工具后，只需运行以下命令即可构建 `snander`：
 
 ```
 make -C src/
 ```
 
-After successful compilation, the target executable file will be generated in `src` folder.
+编译成功后，可执行文件将生成在 `src` 目录下。
 
-Or you can choose static compile, building `snander` statically is as simple as running the command:
+你也可以选择静态编译，只需运行以下命令：
 
 ```
 ./build-for-linux.sh
 ```
 
-After successful compilation, the target executable file will be generated in the `build` folder.
+编译成功后，可执行文件将生成在 `build` 目录下。
 
-**Compiling for Windows**
+**在 Windows 下编译**
 
-After installing the mingw-w64 and necessary tools, building `snander` is as simple as running the included script:
+安装 mingw-w64 及所需工具后，运行仓库自带的脚本即可构建 `snander`：
 
 ```
 ./build-for-windows.sh
 ```
 
-After successful compilation, the target executable file will be generated in the `build` folder, include x86 and x64 binaries.
+编译成功后，可执行文件将生成在 `build` 目录下，包含 x86 和 x64 两个版本。
 
-**Compiling for MacOS**
+**在 macOS 下编译**
 
-Prerequisites:
-* Xcode Command Line Tools: `xcode-select --install`
-* Homebrew: https://brew.sh
-* libusb: `brew install libusb`
-
-After installing the prerequisites, building `snander` is as simple as running the included script:
+安装所需工具后，运行仓库自带的脚本即可构建 `snander`：
 
 ```
 ./build-for-darwin.sh
 ```
 
-After successful compilation, the target executable file will be generated in the `build` folder.
+编译成功后，可执行文件将生成在 `build` 目录下。
 
-Pre-built binaries are available in the `releases/darwin-arm64/` folder for Apple Silicon Macs.
+**编译 OpenWrt IPK 包**
 
-> **Note**: Running the programmer requires `sudo` on macOS to access USB devices.
-
-**macOS Usage Examples:**
-
-Reading SPI NOR Flash (W25Q128BV):
-
-![macOS reading SPI NOR Flash](photos/macos-read-spi-nor.png)
-
-Reading SPI NAND Flash (W25N01GV):
-
-![macOS reading SPI NAND Flash](photos/macos-read-spi-nand.png)
-
-**Compiling for OpenWrt IPK**
-
-First download `OpenWrt SDK` and extract it
+首先下载 `OpenWrt SDK` 并解压
 
 ```
     cd /path/to/your/sdk
     git clone https://github.com/Droid-MAX/SNANDer package/snander
-    make menuconfig # Choose `snander` in section `Utilities`
+    make menuconfig # 在 `Utilities` 目录下选择 `snander`
     make package/snander/compile V=s
 ```
 
-**Usage**
+**使用方法**
 
-Using `snander` is straightforward:
+`snander` 的使用非常直观：
 
 ```
 SNANDer - Serial Nor/nAND/Eeprom programmeR v.1.7.9 by McMCC <mcmcc@mail.ru>
 
   Usage:
- -h             display this message
- -d             disable internal ECC(use read and write page size + OOB size)
- -o <bytes>     manual set OOB size with disable internal ECC(default 0)
- -I             ECC ignore errors(for read test only)
- -k             Skip BAD pages, try to read or write in next page
- -L             print list support chips
- -i             read the chip ID info
- -E             select I2C EEPROM {24c01|24c02|24c04|24c08|24c16|24c32|24c64|24c128|24c256|24c512|24c1024}
-                select Microwire EEPROM {93c06|93c16|93c46|93c56|93c66|93c76|93c86|93c96} (need SPI-to-MW adapter)
-                select SPI EEPROM 25xxx {25010|25020|25040|25080|25160|25320|25640|25128|25256|25512|251024}
- -8             set organization 8-bit for Microwire EEPROM(default 16-bit) and set jumper on SPI-to-MW adapter
- -f <addr len>  set manual address size in bits for Microwire EEPROM(default auto)
- -s <bytes>     set page size from datasheet for fast write SPI EEPROM(default not use)
- -e             erase chip(full or use with -a [-l])
- -l <bytes>     manually set length
- -a <address>   manually set address
- -w <filename>  write chip with data from filename
- -r <filename>  read chip and save data to filename
- -v             verify after write on chip
+ -h             显示此帮助信息
+ -d             禁用内部 ECC（使用读写页大小 + OOB 大小）
+ -o <bytes>     禁用内部 ECC 时手动设置 OOB 大小（默认 0）
+ -I             ECC 忽略错误（仅用于读取测试）
+ -k             跳过坏块，在下一页尝试读写
+ -L             打印支持的芯片列表
+ -i             读取芯片 ID 信息
+ -E             选择 I2C EEPROM {24c01|24c02|24c04|24c08|24c16|24c32|24c64|24c128|24c256|24c512|24c1024}
+                选择 Microwire EEPROM {93c06|93c16|93c46|93c56|93c66|93c76|93c86|93c96}（需要 SPI 转 Microwire 适配器）
+                选择 SPI EEPROM 25xxx {25010|25020|25040|25080|25160|25320|25640|25128|25256|25512|251024}
+ -8             为 Microwire EEPROM 设置 8 位组织结构（默认 16 位），并在 SPI 转 Microwire 适配器上设置跳线
+ -f <addr len>  为 Microwire EEPROM 手动设置地址位数（默认自动）
+ -s <bytes>     根据芯片数据手册设置页大小，用于快速写入 SPI EEPROM（默认不使用）
+ -e             擦除芯片（整片擦除，或与 -a [-l] 配合使用）
+ -l <bytes>     手动设置长度
+ -a <address>   手动设置地址
+ -w <filename>  将文件中的数据写入芯片
+ -r <filename>  读取芯片并将数据保存到文件
+ -v             写入芯片后进行校验
 ```
 
-For example:
+例如：
 
-1. Get Flash info.
+1. 获取 Flash 信息。
 
 ```
 $ ./SNANDer -i
 
 SNANDer - Serial Nor/nAND/Eeprom programmeR v.1.7.9 by McMCC <mcmcc@mail.ru>
 
-Open CH347 device success.
+Found programmer device: WinChipHead (WCH) - CH341A
+Device revision is 3.0.4
 spi device id: ff c2 22 c2 22 (c222c222)
 SPI NOR Flash Not Detected!
 spi_nand_probe: mfr_id = 0xc2, dev_id = 0x22
@@ -126,14 +108,15 @@ Detected SPI NAND Flash: MXIC MX35LF2GE4AB, Flash Size: 256 MB
 $
 ```
 
-2. Full erase flash with disable internal ECC check. Without OOB, page size 2112 bytes.
+2. 禁用内部 ECC 校验后整片擦除 Flash（不使用 OOB，页大小 2112 字节）。
 
 ```
 $ ./SNANDer -d -e
 
 SNANDer - Serial Nor/nAND/Eeprom programmeR v.1.7.9 by McMCC <mcmcc@mail.ru>
 
-Open CH347 device success.
+Found programmer device: WinChipHead (WCH) - CH341A
+Device revision is 3.0.4
 spi device id: ff c2 22 c2 22 (c222c222)
 SPI NOR Flash Not Detected!
 spi_nand_probe: mfr_id = 0xc2, dev_id = 0x22
@@ -150,14 +133,15 @@ Status: OK
 $
 ```
 
-3. Write and verify flash with disable internal ECC check. Without OOB, page size 2112 bytes.
+3. 禁用内部 ECC 校验后写入并校验 Flash（不使用 OOB，页大小 2112 字节）。
 
 ```
 $ ./SNANDer -d -v -w ecc_2Gb_2K_64_flashimage_rfb1_ac2600.bin
 
 SNANDer - Serial Nor/nAND/Eeprom programmeR v.1.7.9 by McMCC <mcmcc@mail.ru>
 
-Open CH347 device success.
+Found programmer device: WinChipHead (WCH) - CH341A
+Device revision is 3.0.4
 spi device id: ff c2 22 c2 22 (c222c222)
 SPI NOR Flash Not Detected!
 spi_nand_probe: mfr_id = 0xc2, dev_id = 0x22
@@ -178,14 +162,15 @@ Status: OK
 $
 ```
 
-4. Read Microwire EEPROM Atmel 93C46 and save file.
+4. 读取 Microwire EEPROM（Atmel 93C46）并保存文件。
 
 ```
 $ ./SNANDer -E 93c46 -r test.bin
 
 SNANDer - Serial Nor/nAND/Eeprom programmeR v.1.7.9 by McMCC <mcmcc@mail.ru>
 
-Open CH347 device success.
+Found programmer device: WinChipHead (WCH) - CH341A
+Device revision is 3.0.4
 Microwire EEPROM chip: 93c46, Size: 64 bytes, Org: 16 bits, fix addr len: Auto
 READ:
 Read addr = 0x0000000000000000, len = 0x0000000000000080
@@ -196,14 +181,15 @@ Elapsed time: 0 seconds
 Status: OK
 ```
 
-5. Write and verify Microwire EEPROM Atmel 93C46 from file.
+5. 从文件写入并校验 Microwire EEPROM（Atmel 93C46）。
 
 ```
 $ ./SNANDer -E 93c46 -w test.bin -v
 
 SNANDer - Serial Nor/nAND/Eeprom programmeR v.1.7.9 by McMCC <mcmcc@mail.ru>
 
-Open CH347 device success.
+Found programmer device: WinChipHead (WCH) - CH341A
+Device revision is 3.0.4
 Microwire EEPROM chip: 93c46, Size: 64 bytes, Org: 16 bits, fix addr len: Auto
 WRITE:
 Write addr = 0x0000000000000000, len = 0x0000000000000080
@@ -222,14 +208,15 @@ Elapsed time: 1 seconds
 Status: OK
 ```
 
-6. Write and verify SPI EEPROM Atmel AT25640B from file.
+6. 从文件写入并校验 SPI EEPROM（Atmel AT25640B）。
 
 ```
 $ ./SNANDer -E 25640 -v -w test.bin
 
 SNANDer - Serial Nor/nAND/Eeprom programmeR v.1.7.9 by McMCC <mcmcc_at_mail.ru>
 
-Open CH347 device success.
+Found programmer device: WinChipHead (WCH) - CH341A
+Device revision is 3.0.4
 SPI EEPROM chip: 25640, Size: 8192 bytes
 WRITE:
 Written addr = 0x0000000000000000, len = 0x0000000000002000
@@ -243,15 +230,16 @@ Elapsed time: 2 seconds
 Status: OK
 ```
 
-7. Fast write and verify SPI EEPROM Atmel AT25640B from file with use page size.
-   (Find out page size from datasheet on chip!!!)
+7. 使用页大小从文件快速写入并校验 SPI EEPROM（Atmel AT25640B）。
+   （页大小请查阅芯片数据手册!!!）
 
 ```
 $ ./SNANDer -E 25640 -v -w test.bin -s 32
 
 SNANDer - Serial Nor/nAND/Eeprom programmeR v.1.7.9 by McMCC <mcmcc_at_mail.ru>
 
-Open CH347 device success.
+Found programmer device: WinChipHead (WCH) - CH341A
+Device revision is 3.0.4
 SPI EEPROM chip: 25640, Size: 8192 bytes
 Setting page size 32B for write.
 WRITE:
@@ -266,7 +254,7 @@ Elapsed time: 2 seconds
 Status: OK
 ```
 
-**Supported Chips**
+**支持的芯片**
 
 ```
 SPI NAND Flash Support List:
@@ -733,18 +721,14 @@ SPI EEPROM Support List:
 011. 251024
 ```
 
-**Author**
+**作者**
 
-Originally written by [McMCC](https://github.com/McMCCRU/SNANDer) and released under the terms of the GNU GPL, version 2.0, or later. Modifications by [Droid-MAX](https://github.com/Droid-MAX/) to make it more easier build for Windows. And [ZhiyuanYuanNJ](https://github.com/ZhiyuanYuanNJ/SNANDer) implemented support for the ch347 programmer.
+原始作者为 [McMCC](https://github.com/McMCCRU/SNANDer)，以 GNU GPL v2.0 或更高版本许可发布。[Droid-MAX](https://github.com/Droid-MAX/) 进行了修改，使其在 Windows 下更易于构建。
 
-**License**
+**许可证**
 
-This is free software: you can redistribute it and/or modify it under the terms of
-the latest GNU General Public License as published by the Free Software Foundation.
+本项目为自由软件：你可以依据自由软件基金会发布的最新版 GNU 通用公共许可证的条款，自由地重新分发和/或修改它。
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+本程序按"现状"分发，希望它有用，但**不提供任何担保**；甚至不隐含对适销性或特定用途适用性的担保。详情请参阅 GNU 通用公共许可证。
 
-You should have received a copy of the GNU General Public License along with this program.
-If not, see <http://www.gnu.org/licenses/>.
+你在收到本程序时应当同时收到一份 GNU 通用公共许可证的副本。如果没有，请参见 <http://www.gnu.org/licenses/>。
