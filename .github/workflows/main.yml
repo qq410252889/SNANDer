@@ -146,10 +146,15 @@ jobs:
           ZIP="${{ steps.info.outputs.zip }}"
           VER="${{ steps.info.outputs.ver }}"
           VARIANT="${{ steps.info.outputs.variant }}"
+          if [[ "${VARIANT}" == "CH347" ]]; then
+            REL_TITLE="SNANDer v${VER}-ch347"
+          else
+            REL_TITLE="SNANDer v${VER}-ch341"
+          fi
           # create release (skip if it already exists)
           gh release create "${TAG}" SNANDer-Windows-32bit.exe SNANDer-Windows-64bit.exe "${ZIP}" \
             --repo "${{ github.repository }}" \
-            --title "SNANDer v${VER}" \
+            --title "${REL_TITLE}" \
             --notes "SNANDer v${VER} (${VARIANT} 版) 云编译发布。\n包含 32/64 位 Windows 可执行文件与完整源码包。\n构建：GitHub Actions + mingw-w64；libusb 静态链接，无需额外 DLL。" 2>&1 \
             || gh release upload "${TAG}" SNANDer-Windows-32bit.exe SNANDer-Windows-64bit.exe "${ZIP}" \
                --repo "${{ github.repository }}" --clobber 2>&1
