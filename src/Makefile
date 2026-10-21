@@ -3,6 +3,9 @@ PKG        = $(TARGET)
 VERSION    = 1.7.9-1
 
 CC        ?= gcc
+# Detect clang-based MinGW toolchains (llvm-mingw); clang differs from GCC
+# in a few flags (no -posix, no -rpath with lld, stricter callback warnings).
+CC_IS_CLANG := $(shell $(CC) --version 2>/dev/null | grep -q clang && echo yes)
 STRIP     ?= strip
 INSTALL   ?= install
 WINDRES   ?= windres
@@ -18,7 +21,11 @@ SRCS = flashcmd_api.c spi_controller.c spi_nand_flash.c spi_nor_flash.c ch341a_s
 
 ifdef LIBS_BASE
 CFLAGS += -I$(LIBS_BASE)/include
+ifeq ($(CC_IS_CLANG),)
 LDFLAGS += -L$(LIBS_BASE)/lib -Wl,-rpath -Wl,$(LIBS_BASE)/lib
+else
+LDFLAGS += -L$(LIBS_BASE)/lib
+endif
 endif
 
 ifeq ($(CONFIG_STATIC), yes)
@@ -33,7 +40,14 @@ endif
 ifeq ($(TARGET_OS), MinGW)
 EXEC_SUFFIX := .exe
 SRCS += $(RES)
+# GCC MinGW uses -posix for the posix threading model; clang (llvm-mingw) rejects it.
+ifeq ($(CC_IS_CLANG),)
 CFLAGS += -posix
+else
+# The source passes plain callbacks to libusb (stdcall on Windows): clang treats
+# this as an error while GCC treats it as a warning. Downgrade it for clang.
+CFLAGS += -Wno-incompatible-function-pointer-types
+endif
 CFLAGS += -Dffs=__builtin_ffs
 CFLAGS += -D__USE_MINGW_ANSI_STDIO=1
 endif
