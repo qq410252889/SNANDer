@@ -1,6 +1,10 @@
 # Workflow's name
 name: Build Application for Windows
 
+# Required permissions for the automatic GITHUB_TOKEN (publish release assets)
+permissions:
+  contents: write
+
 # Workflow's trigger
 on:
   push:
