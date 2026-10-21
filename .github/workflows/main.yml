@@ -98,28 +98,28 @@ jobs:
           git archive HEAD | tar -x -C release_pkg
           VER="${{ steps.info.outputs.ver }}"
           VARIANT="${{ steps.info.outputs.variant }}"
-          cat > release_pkg/说明.txt <<EOF
-SNANDer v${VER} (${VARIANT} 版) - SPI NOR / SPI NAND / EEPROM 编程器工具
-
-源码来源（合并版）：
-  - Droid-MAX/SNANDer (${VARIANT} 分支)
-  - McMCCRU/SNANDer (upstream/main)
-
-包含：
-  SNANDer-Windows-32bit.exe  32 位 Windows 可执行文件 (x86)
-  SNANDer-Windows-64bit.exe  64 位 Windows 可执行文件 (x64)
-  src/ 及其他文件             完整源码与文档
-
-构建信息：
-  GitHub Actions (ubuntu-latest) + mingw-w64 交叉编译
-  libusb-1.0.27 静态链接，无需额外 DLL
-
-使用方法：
-  SNANDer-Windows-64bit.exe -i         读取芯片 ID
-  SNANDer-Windows-64bit.exe -L         列出支持的芯片
-  SNANDer-Windows-64bit.exe -E 24c2048 -r dump.bin  读取 I2C EEPROM
-  （${VARIANT} 版需先安装对应编程器驱动，详情见源码内文档）
-EOF
+          {
+            echo "SNANDer v${VER} (${VARIANT} 版) - SPI NOR / SPI NAND / EEPROM 编程器工具"
+            echo ""
+            echo "源码来源（合并版）："
+            echo "  - Droid-MAX/SNANDer (${VARIANT} 分支)"
+            echo "  - McMCCRU/SNANDer (upstream/main)"
+            echo ""
+            echo "包含："
+            echo "  SNANDer-Windows-32bit.exe  32 位 Windows 可执行文件 (x86)"
+            echo "  SNANDer-Windows-64bit.exe  64 位 Windows 可执行文件 (x64)"
+            echo "  src/ 及其他文件             完整源码与文档"
+            echo ""
+            echo "构建信息："
+            echo "  GitHub Actions (ubuntu-latest) + mingw-w64 交叉编译"
+            echo "  libusb-1.0.27 静态链接，无需额外 DLL"
+            echo ""
+            echo "使用方法："
+            echo "  SNANDer-Windows-64bit.exe -i         读取芯片 ID"
+            echo "  SNANDer-Windows-64bit.exe -L         列出支持的芯片"
+            echo "  SNANDer-Windows-64bit.exe -E 24c2048 -r dump.bin  读取 I2C EEPROM"
+            echo "  （${VARIANT} 版需先安装对应编程器驱动，详情见源码内文档）"
+          } > release_pkg/说明.txt
           cd release_pkg && zip -qr "../${{ steps.info.outputs.zip }}" .
           cd ..
           echo "Package ready: ${{ steps.info.outputs.zip }}"
