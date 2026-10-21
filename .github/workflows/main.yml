@@ -97,10 +97,10 @@ jobs:
           cd "${{ github.workspace }}"
           pwd
           ls -la build/x86/ build/x64/
-          cp -v build/x86/snander.exe SNANDER-Windows-32bit.exe
-          cp -v build/x64/snander.exe SNANDER-Windows-64bit.exe
+          cp -v build/x86/snander.exe SNANDer-Windows-32bit.exe
+          cp -v build/x64/snander.exe SNANDer-Windows-64bit.exe
           mkdir -p release_pkg
-          cp SNANDER-Windows-32bit.exe SNANDER-Windows-64bit.exe release_pkg/
+          cp SNANDer-Windows-32bit.exe SNANDer-Windows-64bit.exe release_pkg/
           git archive HEAD | tar -x -C release_pkg
           VER="${{ steps.info.outputs.ver }}"
           VARIANT="${{ steps.info.outputs.variant }}"
