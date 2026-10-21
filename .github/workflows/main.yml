@@ -6,6 +6,20 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. 1.7.9.3 or 1.7.9.3-ch347)'
+        required: false
+        default: '1.7.9.3'
+      branch:
+        description: 'Branch to build (master or ch347)'
+        required: false
+        default: 'master'
+      variant:
+        description: 'Variant label (CH341A or CH347)'
+        required: false
+        default: 'CH341A'
 
 # Workflow's jobs
 jobs:
@@ -23,13 +37,26 @@ jobs:
       # step0: Resolve branch / variant / zip name from tag
       #   tag v.1.7.9.3       -> master branch (CH341A), zip SNANDer_V1.7.9.3.zip
       #   tag v.1.7.9.3-ch347 -> ch347 branch (CH347), zip SNANDer-CH347_V1.7.9.3.zip
+      #   manual dispatch    -> master branch (CH341A), SNANDer_V<tag>.zip if tag provided
       - name: Resolve Branch and Package Name
         id: info
         shell: bash
         run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            TAG="${{ github.event.inputs.tag }}"
+            BRANCH="${{ github.event.inputs.branch }}"
+            VARIANT="${{ github.event.inputs.variant }}"
+            echo "branch=${BRANCH:-master}" >> "$GITHUB_OUTPUT"
+            echo "variant=${VARIANT:-CH341A}" >> "$GITHUB_OUTPUT"
+            echo "zip=SNANDer_V${TAG:-latest}.zip" >> "$GITHUB_OUTPUT"
+            echo "ver=${TAG:-latest}" >> "$GITHUB_OUTPUT"
+            echo "release_tag=v.${TAG:-latest}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           TAG="${GITHUB_REF_NAME}"
           VER="${TAG#v.}"
           echo "ver=${VER}" >> "$GITHUB_OUTPUT"
+          echo "release_tag=${TAG}" >> "$GITHUB_OUTPUT"
           if [[ "${VER}" == *-ch347 ]]; then
             echo "branch=ch347" >> "$GITHUB_OUTPUT"
             echo "variant=CH347" >> "$GITHUB_OUTPUT"
@@ -101,7 +128,7 @@ EOF
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ steps.info.outputs.release_tag }}
           files: |
             SNANDer-Windows-32bit.exe
             SNANDer-Windows-64bit.exe
