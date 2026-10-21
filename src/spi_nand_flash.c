@@ -129,6 +129,7 @@ static unsigned int spi_nand_poll_delay_us(uint64_t elapsed_us)
 #define _SPI_NAND_CHIP_SIZE_1GBIT			0x08000000
 #define _SPI_NAND_CHIP_SIZE_2GBIT			0x10000000
 #define _SPI_NAND_CHIP_SIZE_4GBIT			0x20000000
+#define _SPI_NAND_CHIP_SIZE_8GBIT			0x40000000
 
 /* SPI NAND Manufacturers ID */
 #define _SPI_NAND_MANUFACTURER_ID_GIGADEVICE		0xC8
