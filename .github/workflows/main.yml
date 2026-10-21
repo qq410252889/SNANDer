@@ -122,17 +122,24 @@ jobs:
           } > release_pkg/说明.txt
           cd release_pkg && zip -qr "../${{ steps.info.outputs.zip }}" .
           cd ..
+          ls -la SNANDer-Windows-32bit.exe SNANDer-Windows-64bit.exe "${{ steps.info.outputs.zip }}"
           echo "Package ready: ${{ steps.info.outputs.zip }}"
 
-      # step5: Publish Release
+      # step5: Publish Release (GitHub CLI)
       - name: Publish Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.info.outputs.release_tag }}
-          files: |
-            SNANDer-Windows-32bit.exe
-            SNANDer-Windows-64bit.exe
-            ${{ steps.info.outputs.zip }}
-          fail_on_unmatched_files: true
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          TAG="${{ steps.info.outputs.release_tag }}"
+          ZIP="${{ steps.info.outputs.zip }}"
+          VER="${{ steps.info.outputs.ver }}"
+          VARIANT="${{ steps.info.outputs.variant }}"
+          # create release (skip if it already exists)
+          gh release create "${TAG}" SNANDer-Windows-32bit.exe SNANDer-Windows-64bit.exe "${ZIP}" \
+            --repo "${{ github.repository }}" \
+            --title "SNANDer v${VER}" \
+            --notes "SNANDer v${VER} (${VARIANT} 版) 云编译发布。\n包含 32/64 位 Windows 可执行文件与完整源码包。\n构建：GitHub Actions + mingw-w64；libusb 静态链接，无需额外 DLL。" 2>&1 \
+            || gh release upload "${TAG}" SNANDer-Windows-32bit.exe SNANDer-Windows-64bit.exe "${ZIP}" \
+               --repo "${{ github.repository }}" --clobber 2>&1
