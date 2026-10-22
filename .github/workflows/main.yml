@@ -34,7 +34,9 @@ jobs:
     # the type of machine to run the job on (pin LTS; ubuntu-latest migrated to Ubuntu 26 on 2026-10-19)
     runs-on: ubuntu-24.04
 
-    if: github.event.repository.owner.id == github.event.sender.id
+    # only build+release for SNANDer version tags (v.*) or manual dispatch;
+    # other tags (e.g. UI releases ui-*) must not run the SNANDer build
+    if: github.event.repository.owner.id == github.event.sender.id && (github.event_name == 'workflow_dispatch' || startsWith(github.ref_name, 'v.'))
 
     # create steps
     steps:
